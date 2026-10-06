@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nasruddin AI Trader</title>
+<title>Nasruddin AI Trader V3</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,75 +11,50 @@
   <div class="brand">NASRUDDIN <span>AI</span></div>
   <div class="top-status"><span id="liveDot">●</span> <span id="dataStatus">CONNECTING</span></div>
 </header>
-
 <main>
 <section class="hero">
   <div>
     <p class="eyebrow">AI CRYPTO INVESTMENT COMMAND CENTER</p>
     <h1>Trade smarter with<br><span>AI agents.</span></h1>
-    <p class="intro">Live Bitget market data is now connected through public market-data endpoints. Trading remains locked in paper mode.</p>
-    <div class="actions">
-      <button onclick="runScan()">Run AI Market Scan</button>
-      <button class="secondary" onclick="refreshAll()">Refresh Data</button>
-    </div>
+    <p class="intro">Live Bitget market data plus multi-agent technical analysis. Signals are paper-only and no real orders can be placed from this browser prototype.</p>
+    <div class="actions"><button onclick="runScan()">Run AI Market Scan</button><button class="secondary" onclick="refreshAll()">Refresh Data</button></div>
     <p class="updated">Last update: <b id="lastUpdate">--</b></p>
   </div>
-  <div class="profile">
-    <div class="avatar">NA</div>
-    <h2>Nasruddin A.</h2>
-    <p>Quality • Process Excellence • AI Trading</p>
-    <small>Bitget market data: <b class="green">LIVE</b></small>
-  </div>
+  <div class="profile"><div class="avatar">NA</div><h2>Nasruddin A.</h2><p>Quality • Process Excellence • AI Trading</p><small>Bitget market data: <b class="green">LIVE</b></small></div>
 </section>
-
 <section class="stats">
   <div><small>Paper Portfolio</small><b>₹10,00,000</b><i>Demo</i></div>
-  <div><small>Today's P&amp;L</small><b class="green">+₹8,420</b><i>Paper result</i></div>
-  <div><small>AI Opportunities</small><b id="signals">--</b><i>Calculated from live tickers</i></div>
-  <div><small>Risk Score</small><b>32/100</b><i>Configured</i></div>
+  <div><small>Today's P&amp;L</small><b class="green">+₹8,420</b><i>Illustrative paper result</i></div>
+  <div><small>AI Opportunities</small><b id="signals">--</b><i>Multi-agent score ≥ 70</i></div>
+  <div><small>Risk Score</small><b id="riskScore">32/100</b><i>Configured guardrail</i></div>
 </section>
-
 <section>
-  <div class="section-head"><h2>Live Market</h2><span id="marketClock">Bitget Spot</span></div>
+  <div class="section-head"><h2>Live Market</h2><span>Bitget Spot</span></div>
   <div class="market-grid" id="marketGrid"></div>
 </section>
-
 <section>
   <div class="section-head"><h2>AI Agents</h2><span>8 specialists</span></div>
   <div class="agents">
-    <article>🔭<h3>Market Scout</h3><p>Finds opportunities from live market conditions.</p></article>
-    <article>📈<h3>Technical Agent</h3><p>Trend, RSI and momentum analysis.</p></article>
-    <article>📚<h3>Fundamental Agent</h3><p>Evaluates asset quality and context.</p></article>
-    <article>📰<h3>News Agent</h3><p>Tracks relevant market sentiment.</p></article>
-    <article>🛡️<h3>Risk Agent</h3><p>Applies capital-preservation rules.</p></article>
-    <article>🧠<h3>Decision Agent</h3><p>Combines evidence into a paper signal.</p></article>
-    <article>💼<h3>Portfolio Agent</h3><p>Monitors positions and exposure.</p></article>
-    <article>⚡<h3>Execution Agent</h3><p>Reserved for the secure Bitget backend.</p></article>
+    <article>🔭<h3>Market Scout</h3><p>Finds unusual price, volume and trend conditions.</p></article>
+    <article>📈<h3>Technical Agent</h3><p>Evaluates RSI, EMA trend and MACD momentum.</p></article>
+    <article>⚡<h3>Momentum Agent</h3><p>Measures recent return and acceleration.</p></article>
+    <article>📰<h3>News Agent</h3><p>Reserved for the secure backend/news feed stage.</p></article>
+    <article>🛡️<h3>Risk Agent</h3><p>Scores volatility and protects capital.</p></article>
+    <article>🧠<h3>Decision Agent</h3><p>Combines agent evidence into a paper signal.</p></article>
+    <article>💼<h3>Portfolio Agent</h3><p>Reserved for exposure and position management.</p></article>
+    <article>⚙️<h3>Execution Agent</h3><p>Locked until secure backend + paper testing.</p></article>
   </div>
 </section>
-
 <section>
-  <div class="section-head"><h2>Opportunity Board</h2><span id="boardNote">Live ticker analysis</span></div>
-  <div class="table" id="opportunityBoard">
-    <div class="row head"><span>Asset</span><span>AI Score</span><span>Signal</span><span>24H</span><span>Action</span></div>
-  </div>
+  <div class="section-head"><h2>AI Analysis Board</h2><span id="boardNote">15m technical analysis</span></div>
+  <div class="table" id="opportunityBoard"><div class="row head"><span>Asset</span><span>AI Score</span><span>Signal</span><span>24H</span><span>Action</span></div></div>
 </section>
-
 <section class="control">
-  <div>
-    <p class="eyebrow">AUTONOMOUS TRADING</p>
-    <h2>AI Trading Controls</h2>
-    <p>Real execution is intentionally locked. The next stages add backtesting, paper trading and a secure backend before any live order capability.</p>
-  </div>
-  <div class="controls">
-    <label>Risk / trade <b>1%</b></label>
-    <label>Daily loss limit <b>3%</b></label>
-    <label>Max position <b>5%</b></label>
-    <button class="danger" onclick="stopAI()">STOP AI TRADING</button>
-  </div>
+  <div><p class="eyebrow">AUTONOMOUS TRADING</p><h2>AI Trading Controls</h2><p>Real execution is intentionally locked. The next stages are historical backtesting, paper execution and a secure backend. The browser never stores trading credentials.</p></div>
+  <div class="controls"><label>Risk / trade <b>1%</b></label><label>Daily loss limit <b>3%</b></label><label>Max position <b>5%</b></label><button class="danger" onclick="stopAI()">STOP AI TRADING</button></div>
 </section>
 </main>
-<footer>Nasruddin AI • V2 live-market prototype • Bitget public market data • No real orders are placed.</footer>
+<footer>Nasruddin AI • V3 multi-agent technical analysis prototype • Bitget public market data • No real orders are placed.</footer>
 <script src="app.js"></script>
 </body>
 </html>
