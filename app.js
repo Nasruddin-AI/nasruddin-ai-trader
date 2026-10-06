@@ -1,0 +1,3 @@
+function runScan(){const n=5+Math.floor(Math.random()*6);document.getElementById("signals").textContent=n;alert("Demo AI scan completed. Live market data will be connected in a later stage.");}
+function review(symbol){alert(symbol+" selected. The full agent analysis and paper-trade workflow will be added in the next stage.");}
+function stopAI(){alert("AI trading is already locked in this browser prototype. No real orders can be placed.");}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nasruddin AI Trader</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">NASRUDDIN <span>AI</span></div>
+  <div class="status">● PAPER MODE</div>
+</header>
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">AI CRYPTO INVESTMENT COMMAND CENTER</p>
+      <h1>Trade smarter with<br><span>AI agents.</span></h1>
+      <p class="intro">A browser-based command center for market intelligence, autonomous strategy testing, portfolio monitoring and risk control.</p>
+      <button onclick="runScan()">Run AI Market Scan</button>
+    </div>
+    <div class="profile">
+      <div class="avatar">NA</div>
+      <h2>Nasruddin A.</h2>
+      <p>Quality • Process Excellence • AI Trading</p>
+      <small>Bitget integration: planned</small>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div><small>Paper Portfolio</small><b>₹10,00,000</b><i>+0.84%</i></div>
+    <div><small>Today's P&amp;L</small><b class="green">+₹8,420</b><i>Demo</i></div>
+    <div><small>AI Opportunities</small><b id="signals">7</b><i>Watchlist</i></div>
+    <div><small>Risk Score</small><b>32/100</b><i>Moderate</i></div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>AI Agents</h2><span>8 specialists</span></div>
+    <div class="agents">
+      <article>🔭<h3>Market Scout</h3><p>Finds market opportunities.</p></article>
+      <article>📈<h3>Technical Agent</h3><p>Trend, RSI and momentum.</p></article>
+      <article>📚<h3>Fundamental Agent</h3><p>Evaluates asset quality.</p></article>
+      <article>📰<h3>News Agent</h3><p>Tracks relevant sentiment.</p></article>
+      <article>🛡️<h3>Risk Agent</h3><p>Protects trading capital.</p></article>
+      <article>🧠<h3>Decision Agent</h3><p>Combines evidence.</p></article>
+      <article>💼<h3>Portfolio Agent</h3><p>Monitors positions.</p></article>
+      <article>⚡<h3>Execution Agent</h3><p>Future Bitget API layer.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Opportunity Board</h2><span>Illustrative data</span></div>
+    <div class="table">
+      <div class="row head"><span>Asset</span><span>AI Score</span><span>Signal</span><span>Risk</span><span>Action</span></div>
+      <div class="row"><b>BTC/USDT</b><strong>82/100</strong><em class="green">BUY WATCH</em><span>Medium</span><button class="mini" onclick="review('BTC/USDT')">Review</button></div>
+      <div class="row"><b>ETH/USDT</b><strong>76/100</strong><em class="green">ACCUMULATE</em><span>Medium</span><button class="mini" onclick="review('ETH/USDT')">Review</button></div>
+      <div class="row"><b>SOL/USDT</b><strong>69/100</strong><em>WATCH</em><span>High</span><button class="mini" onclick="review('SOL/USDT')">Review</button></div>
+    </div>
+  </section>
+
+  <section class="control">
+    <div>
+      <p class="eyebrow">AUTONOMOUS TRADING</p>
+      <h2>AI Trading Controls</h2>
+      <p>Autonomous execution will remain locked until a secure Bitget backend and risk controls are configured.</p>
+    </div>
+    <div class="controls">
+      <label>Risk / trade <b>1%</b></label>
+      <label>Daily loss limit <b>3%</b></label>
+      <label>Max position <b>5%</b></label>
+      <button class="danger" onclick="stopAI()">STOP AI TRADING</button>
+    </div>
+  </section>
+</main>
+<footer>Nasruddin AI • Browser prototype • Paper mode only • No real trades are placed.</footer>
+<script src="app.js"></script>
+</body>
+</html>
