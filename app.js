@@ -2,7 +2,7 @@ const symbols=["BTCUSDT","ETHUSDT","SOLUSDT"];
 const names={BTCUSDT:"BTC/USDT",ETHUSDT:"ETH/USDT",SOLUSDT:"SOL/USDT"};
 const state={};
 const interval="15m";
-const BUILD="V3.2";
+const BUILD="V4.1";
 function num(v,fallback=0){const n=Number(v);return Number.isFinite(n)?n:fallback}
 function fmtPrice(v){v=num(v);if(v>=1000)return "$"+v.toLocaleString(undefined,{maximumFractionDigits:2});if(v>=1)return "$"+v.toLocaleString(undefined,{maximumFractionDigits:3});return "$"+v.toLocaleString(undefined,{maximumFractionDigits:6})}
 function clamp(v,a=0,b=100){v=num(v,50);return Math.max(a,Math.min(b,v))}
@@ -54,7 +54,7 @@ async function getHistorical(symbol,tf){
   const key=symbol+tf;
   if(btCache[key]) return btCache[key];
   const u=`https://api.bitget.com/api/v3/market/candles?category=SPOT&symbol=${symbol}&interval=${tf}&type=market&limit=200`;
-  const r=await fetch(u,{cache:'no-store'}); if(!r.ok) throw Error('Historical HTTP '+r.status);
+  const r=await fetch(u,{cache:'no-store'}); if(!r.ok) throw Error('Historical HTTP '+r.status+' ('+tf+')');
   const j=await r.json(); if(j.code!=='00000') throw Error(j.msg||'Historical API error');
   const rows=j.data.sort((a,b)=>Number(a[0])-Number(b[0])).map(x=>({ts:num(x[0]),o:num(x[1]),h:num(x[2]),l:num(x[3]),c:num(x[4]),v:num(x[5])})).filter(x=>x.c>0&&x.h>0&&x.l>0);
   btCache[key]=rows; return rows;
