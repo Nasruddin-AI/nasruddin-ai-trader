@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nasruddin AI Trader V3</title>
+<title>Nasruddin AI Trader V4</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -49,12 +49,30 @@
   <div class="section-head"><h2>AI Analysis Board</h2><span id="boardNote">15m technical analysis</span></div>
   <div class="table" id="opportunityBoard"><div class="row head"><span>Asset</span><span>AI Score</span><span>Signal</span><span>24H</span><span>Action</span></div></div>
 </section>
+
+<section class="backtest-section">
+  <div class="section-head"><h2>Backtest Lab</h2><span id="btStatus">Ready</span></div>
+  <div class="backtest-card">
+    <div class="backtest-controls">
+      <label>Asset<select id="btSymbol"><option value="BTCUSDT">BTC/USDT</option><option value="ETHUSDT">ETH/USDT</option><option value="SOLUSDT">SOL/USDT</option></select></label>
+      <label>Timeframe<select id="btInterval"><option value="1h">1 hour</option><option value="4h">4 hours</option><option value="15m">15 minutes</option></select></label>
+      <label>Starting capital<input id="btCapital" type="number" value="1000000" min="1000" step="1000"></label>
+      <label>Fee / side (%)<input id="btFee" type="number" value="0.10" min="0" max="1" step="0.01"></label>
+      <label>Slippage / side (%)<input id="btSlip" type="number" value="0.05" min="0" max="1" step="0.01"></label>
+      <button onclick="runBacktest()">Run Backtest</button>
+    </div>
+    <p class="bt-note">Historical simulation only. The engine uses the same rules-based technical scoring family as the live analysis. It does not place orders.</p>
+    <div class="bt-metrics" id="btMetrics">Run a backtest to see results.</div>
+    <div class="bt-chart-wrap"><canvas id="btChart" height="220"></canvas></div>
+    <div class="table bt-trades" id="btTrades"><div class="row head"><span>Entry</span><span>Exit</span><span>Side</span><span>P&amp;L</span><span>Return</span></div></div>
+  </div>
+</section>
 <section class="control">
   <div><p class="eyebrow">AUTONOMOUS TRADING</p><h2>AI Trading Controls</h2><p>Real execution is intentionally locked. The next stages are historical backtesting, paper execution and a secure backend. The browser never stores trading credentials.</p></div>
   <div class="controls"><label>Risk / trade <b>1%</b></label><label>Daily loss limit <b>3%</b></label><label>Max position <b>5%</b></label><button class="danger" onclick="stopAI()">STOP AI TRADING</button></div>
 </section>
 </main>
-<footer>Nasruddin AI • V3 multi-agent technical analysis prototype • Bitget public market data • No real orders are placed.</footer>
-<script src="app.js?v=32"></script>
+<footer>Nasruddin AI • V4 multi-agent analysis + historical backtesting lab • Bitget public market data • No real orders are placed.</footer>
+<script src="app.js?v=40"></script>
 </body>
 </html>

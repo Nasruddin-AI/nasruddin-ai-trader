@@ -47,3 +47,52 @@ async function refreshAll(){const status=document.getElementById("dataStatus");t
 function runScan(){const ready=symbols.map(s=>state[s]?.analysis).filter(Boolean);if(!ready.length)return alert("AI analysis is still loading.");const best=ready.slice().sort((a,b)=>b.finalScore-a.finalScore)[0];const bestSym=symbols.find(s=>state[s]?.analysis===best);alert(`Multi-agent market scan complete.\n\nTop paper candidate: ${names[bestSym]}\nAI score: ${best.finalScore}/100\nSignal: ${best.signalLabel}\nTechnical: ${best.technicalScore}/100\nRisk: ${Math.round(best.risk)}/100\n\nThis is a rules-based V3 analysis engine using live Bitget candles. News, fundamental context, backtesting and secure paper execution are next stages. No real order is placed.`)}
 function stopAI(){alert("AI trading is locked. This site cannot place real orders.")}
 refreshAll();setInterval(refreshAll,30000);
+
+/* V4 Backtest Lab */
+const btCache={};
+async function getHistorical(symbol,tf){
+  const key=symbol+tf;
+  if(btCache[key]) return btCache[key];
+  const u=`https://api.bitget.com/api/v3/market/candles?category=SPOT&symbol=${symbol}&interval=${tf}&type=market&limit=200`;
+  const r=await fetch(u,{cache:'no-store'}); if(!r.ok) throw Error('Historical HTTP '+r.status);
+  const j=await r.json(); if(j.code!=='00000') throw Error(j.msg||'Historical API error');
+  const rows=j.data.sort((a,b)=>Number(a[0])-Number(b[0])).map(x=>({ts:num(x[0]),o:num(x[1]),h:num(x[2]),l:num(x[3]),c:num(x[4]),v:num(x[5])})).filter(x=>x.c>0&&x.h>0&&x.l>0);
+  btCache[key]=rows; return rows;
+}
+function scoreAt(candles){
+  if(candles.length<55)return null;
+  const closes=candles.map(x=>x.c), volumes=candles.map(x=>x.v), last=closes.at(-1);
+  const e20=ema(closes,20),e50=ema(closes,50),r=rsi(closes,14); let ms=[];
+  for(let i=26;i<=closes.length;i++){const s=closes.slice(0,i),a=ema(s,12),b=ema(s,26);if(Number.isFinite(a)&&Number.isFinite(b))ms.push(a-b)}
+  const sig=ema(ms,9),macd=ms.at(-1),atrVal=atr(candles,14);
+  const ret5=closes.length>5?(last/closes.at(-6)-1)*100:0, ret20=closes.length>20?(last/closes.at(-21)-1)*100:0;
+  const va=avg(volumes.slice(-21,-1)),vr=va>0?last*0+num(volumes.at(-1))/va:1;
+  const trend=last>e20&&e20>e50?88:last<e20&&e20<e50?25:55;
+  const rs=r>=55&&r<=70?82:r>70?55:r>=45?60:r>=30?40:68;
+  const mscr=Number.isFinite(sig)&&Number.isFinite(macd)?(macd>sig&&macd>0?85:macd>sig?72:macd<sig&&macd<0?25:45):50;
+  const mom=clamp(50+ret5*9+ret20*3), volume=clamp(50+(vr-1)*35), risk=clamp(100-(num(atrVal)/last*100)*45);
+  const tech=Math.round(avg([trend,rs,mscr,mom])), market=Math.round(avg([tech,volume,50])), final=Math.round(avg([tech,mom,market,risk]));
+  return {score:clamp(final),rsi:r};
+}
+function fmtDate(ts){return new Date(ts).toLocaleString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}
+function money(v){return '₹'+Math.round(v).toLocaleString('en-IN')}
+function drawBacktest(points){const canvas=document.getElementById('btChart'),ctx=canvas.getContext('2d'),dpr=devicePixelRatio||1,w=canvas.clientWidth||600,h=220;canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);if(points.length<2)return;const vals=points.map(x=>x.equity),min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;ctx.strokeStyle='#d6ad4d';ctx.lineWidth=2;ctx.beginPath();points.forEach((p,i)=>{const x=i*(w-8)/(points.length-1)+4,y=h-12-((p.equity-min)/range)*(h-28);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.fillStyle='#858991';ctx.font='11px sans-serif';ctx.fillText('Equity curve',8,15);ctx.fillText(money(max),8,32);ctx.fillText(money(min),8,h-4)}
+async function runBacktest(){
+  const symbol=document.getElementById('btSymbol').value,tf=document.getElementById('btInterval').value,capital=Math.max(1000,num(document.getElementById('btCapital').value,1000000)),fee=num(document.getElementById('btFee').value,.1)/100,slip=num(document.getElementById('btSlip').value,.05)/100;
+  const status=document.getElementById('btStatus');status.textContent='Loading historical candles…';
+  try{
+    const c=await getHistorical(symbol,tf); if(c.length<80)throw Error('Not enough historical candles returned for a meaningful test.');
+    let cash=capital,position=null,trades=[],curve=[{ts:c[0].ts,equity:cash}];
+    for(let i=55;i<c.length;i++){
+      const window=c.slice(0,i+1), bar=c[i], prev=c[i-1], a=scoreAt(window); if(!a)continue;
+      if(!position && a.score>=72){const entry=bar.c*(1+slip), riskPct=.01, riskCash=cash*riskPct, stop=entry*(1-.015), qty=riskCash/(entry-stop), maxQty=(cash*.05)/entry;qty=Math.min(qty,maxQty);const cost=qty*entry*(1+fee);if(cost<=cash){cash-=cost;position={entry,qty,entryTs:bar.ts,stop,target:entry*(1+.03)}}}
+      if(position){let exit=null,reason='Signal';if(bar.l<=position.stop){exit=position.stop*(1-slip);reason='Stop'}else if(bar.h>=position.target){exit=position.target*(1-slip);reason='Target'}else if(a.score<55){exit=bar.c*(1-slip);reason='Signal'}if(exit!==null){const gross=(exit-position.entry)*position.qty, fees=(exit*position.qty*fee), pnl=gross-fees;cash+=exit*position.qty-fees;trades.push({entryTs:position.entryTs,exitTs:bar.ts,side:'LONG',pnl,ret:pnl/(position.entry*position.qty)*100,reason});position=null}}
+      const equity=cash+(position?position.qty*bar.c:0);curve.push({ts:bar.ts,equity});
+    }
+    if(position){const bar=c.at(-1),exit=bar.c*(1-slip),gross=(exit-position.entry)*position.qty,fees=exit*position.qty*fee,pnl=gross-fees;cash+=exit*position.qty-fees;trades.push({entryTs:position.entryTs,exitTs:bar.ts,side:'LONG',pnl,ret:pnl/(position.entry*position.qty)*100,reason:'End'});position=null;curve.push({ts:bar.ts,equity:cash})}
+    const final= cash, totalRet=(final/capital-1)*100, wins=trades.filter(t=>t.pnl>0),losses=trades.filter(t=>t.pnl<=0),winRate=trades.length?wins.length/trades.length*100:0, grossWin=wins.reduce((s,t)=>s+t.pnl,0),grossLoss=Math.abs(losses.reduce((s,t)=>s+t.pnl,0)),pf=grossLoss?grossWin/grossLoss:(grossWin?Infinity:0);let peak=capital,maxDD=0;for(const p of curve){peak=Math.max(peak,p.equity);maxDD=Math.max(maxDD,(peak-p.equity)/peak*100)}
+    document.getElementById('btMetrics').innerHTML=`<div class="bt-metric"><small>Final equity</small><b>${money(final)}</b></div><div class="bt-metric"><small>Total return</small><b class="${totalRet>=0?'positive':'negative'}">${totalRet>=0?'+':''}${totalRet.toFixed(2)}%</b></div><div class="bt-metric"><small>Win rate</small><b>${winRate.toFixed(1)}%</b></div><div class="bt-metric"><small>Max drawdown</small><b class="negative">${maxDD.toFixed(2)}%</b></div><div class="bt-metric"><small>Profit factor</small><b>${Number.isFinite(pf)?pf.toFixed(2):'∞'}</b></div><div class="bt-metric"><small>Trades</small><b>${trades.length}</b></div>`;
+    document.getElementById('btTrades').innerHTML='<div class="row head"><span>Entry</span><span>Exit</span><span>Side</span><span>P&amp;L</span><span>Return</span></div>'+trades.slice(-30).reverse().map(t=>`<div class="row"><span>${fmtDate(t.entryTs)}</span><span>${fmtDate(t.exitTs)}</span><span>${t.side}</span><b class="${t.pnl>=0?'positive':'negative'}">${t.pnl>=0?'+':''}${money(t.pnl)}</b><span class="${t.ret>=0?'positive':'negative'}">${t.ret>=0?'+':''}${t.ret.toFixed(2)}%</span></div>`).join('');
+    drawBacktest(curve);status.textContent=`${names[symbol]} • ${tf} • ${c.length} candles`;
+  }catch(e){status.textContent='Backtest error';document.getElementById('btMetrics').textContent=e.message;console.error(e)}
+}
